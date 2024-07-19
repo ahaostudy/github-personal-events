@@ -4,11 +4,12 @@
 // @version      1.0.0
 // @description  This plugin is used to display personal events on the GitHub homepage
 // @author       ahaostudy
+// @license      MIT
 // @match        https://github.com/
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=github.com
 // @grant        GM_addStyle
-// @require      https://cdn.jsdelivr.net/npm/marked/marked.min.js
-// @require      https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js
+// @require      https://update.greasyfork.org/scripts/34138/223779/markedjs.js
+// @require      https://update.greasyfork.org/scripts/454265/1113258/Axios.js
 // ==/UserScript==
 
 (function () {
