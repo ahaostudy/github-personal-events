@@ -32,23 +32,6 @@ async function init() {
   }
 }
 
-let conduitFeedFrameCount: number = 0
-
-/**
- * Listen PR list loading, execute handler when page loads new PR list (only execute once)
- * @param {Function} handler
- */
-function listenConduitTurboFrame(handler: Function) {
-  const interval = setInterval(() => {
-    const len = document.querySelectorAll('turbo-frame').length
-    if (conduitFeedFrameCount !== len) {
-      clearInterval(interval)
-      conduitFeedFrameCount = len
-      handler()
-    }
-  }, 50)
-}
-
 abstract class Event {
   lastDateTime = new Date().toISOString()
 
@@ -127,7 +110,7 @@ class PullRequestEvent extends Event {
    */
   async load() {
     const pullRequests = await this.fetch()
-    listenConduitTurboFrame(() => {
+    new EventsDOMListener().listen(() => {
       const moreButton = document.querySelector(
         '#conduit-feed-frame > form > button'
       )
@@ -210,6 +193,25 @@ class PullRequestEvent extends Event {
 
     const card = new Card(cardHeader, cardBody)
     return createElementFromHTML(card.html())
+  }
+}
+
+class EventsDOMListener {
+  count: number = 0
+
+  /**
+   * Listen PR list loading, execute handler when page loads new PR list (only execute once)
+   * @param {Function} handler
+   */
+  listen(handler: Function) {
+    const interval = setInterval(() => {
+      const cnt = document.querySelectorAll('turbo-frame').length
+      if (this.count !== cnt) {
+        clearInterval(interval)
+        this.count = cnt
+        handler()
+      }
+    }, 50)
   }
 }
 
