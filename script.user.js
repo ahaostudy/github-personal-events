@@ -41,22 +41,40 @@ async function init() {
   loadPullRequests(username);
 }
 
+let conduitFeedFrameCount = 0;
+
+/**
+ * Listen PR list loading, execute handler when page loads new PR list (only execute once)
+ * @param {Function} handler
+ */
+function listenConduitTurboFrame(handler) {
+  const interval = setInterval(() => {
+    const len = document.querySelectorAll("turbo-frame").length;
+    if (conduitFeedFrameCount !== len) {
+      clearInterval(interval);
+      conduitFeedFrameCount = len;
+      handler();
+    }
+  }, 50);
+}
+
 /**
  * Load the user's PR list to the homepage
  * @param {String} username
  */
 async function loadPullRequests(username) {
   const pullRequests = await fetchPullRequests(username);
-  setTimeout(() => {
-    renderPullRequests(pullRequests);
+  listenConduitTurboFrame(() => {
     const moreButton = document.querySelector(
       "#conduit-feed-frame > form > button"
     );
-    if (moreButton)
+    if (moreButton) {
       moreButton.addEventListener("click", () => {
         loadPullRequests(username);
       });
-  }, 1000);
+      renderPullRequests(pullRequests, false);
+    } else renderPullRequests(pullRequests, true);
+  });
 }
 
 let lastPRDateTime = new Date().toISOString();
@@ -96,11 +114,13 @@ async function fetchPullRequests(username) {
 /**
  * Render multiple PR nodes to the List on the homepage in chronological order
  * @param {Array<Element>} pullRequestElements
+ * @param {Boolean} showMore
  */
-function renderPullRequests(pullRequestElements) {
-  let conduitFeedFrame = document.querySelector("#conduit-feed-frame");
+function renderPullRequests(pullRequestElements, showMore) {
+  const conduitFeedFrame = document.querySelector("#conduit-feed-frame");
+  const articles = conduitFeedFrame.querySelectorAll("article");
   let index = 0;
-  for (let children of conduitFeedFrame.querySelectorAll("article")) {
+  for (let children of articles) {
     const dateTime = getDateTimeFromElement(children);
     if (dateTime !== null) {
       for (let i = index; i < pullRequestElements.length; i++) {
@@ -112,6 +132,20 @@ function renderPullRequests(pullRequestElements) {
           index = i + 1;
         } else break;
       }
+    }
+  }
+  if (showMore) {
+    let earlierDateTime = new Date();
+    earlierDateTime.setMonth(earlierDateTime.getMonth() - 3);
+    const parentNode = articles[articles.length - 1].parentNode;
+    for (let i = index; i < pullRequestElements.length; i++) {
+      const element = pullRequestElements[i];
+      const prDateTime = getDateTimeFromElement(element);
+      if (prDateTime.getTime() > earlierDateTime.getTime()) {
+        parentNode.appendChild(element);
+        lastPRDateTime = prDateTime.toISOString();
+        index = i + 1;
+      } else break;
     }
   }
 }
