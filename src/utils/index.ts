@@ -3,9 +3,10 @@
  * @param {string} html
  * @returns HTML element
  */
-function createElementFromHTML(html: string) {
+function createElementFromHTML(html: string): Element {
   const container = document.createElement('div')
   container.innerHTML = html
+  // @ts-ignore
   return container.firstElementChild
 }
 
@@ -20,5 +21,4 @@ function getTimeFromEventElement(element: Element): Date | null {
   return new Date(relativeTimeElement.getAttribute('datetime') || '')
 }
 
-
-export {createElementFromHTML, getTimeFromEventElement }
+export { createElementFromHTML, getTimeFromEventElement }

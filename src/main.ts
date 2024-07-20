@@ -1,4 +1,5 @@
-import { Events, PullRequestEvent } from './event'
+import { EventsGroup, CommitEvents, PullRequestEvents } from './event'
+
 ;(function () {
   'use strict'
 
@@ -20,15 +21,15 @@ async function init() {
       background-color: var(--fgColor-open);
     }
     
-    .color-fg-push {
-      fill: white;
-      background-color: var(--fgColor-accent);
+    .color-fg-commits {
+      color: var(--fgColor-accent);
     }
   `)
 
   if (username) {
-    const events = new Events()
-    events.regsiter(new PullRequestEvent())
-    events.load(username)
+    const eventsGroup = new EventsGroup()
+    eventsGroup.regsiter(new CommitEvents())
+    eventsGroup.regsiter(new PullRequestEvents())
+    eventsGroup.load(username)
   }
 }

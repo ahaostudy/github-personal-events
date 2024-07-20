@@ -1,9 +1,9 @@
-import { Event } from './event'
+import { EventItem, Events } from './event'
 
-class Events {
-  events: Event[] = []
+class EventsGroup {
+  events: Events<any>[] = []
 
-  regsiter(event: Event) {
+  regsiter<T extends EventItem>(event: Events<T>) {
     this.events.push(event)
   }
 
@@ -14,7 +14,8 @@ class Events {
   }
 }
 
-export { Events }
+export { EventsGroup }
 
-export { Event } from './event'
-export { PullRequestEvent } from './pull_request'
+export { CommitEvents } from './commits'
+export { Events } from './event'
+export { PullRequestEvents } from './pull_request'

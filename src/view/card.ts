@@ -26,6 +26,12 @@ interface HTML {
   html(): string
 }
 
+class EmptyHTML implements HTML {
+  html(): string {
+    return ''
+  }
+}
+
 class CardHeader {
   avatar: Image
   icon: string
@@ -127,7 +133,7 @@ class CardBody {
   constructor(
     title: Link = new Link('', ''),
     markdown: string = '',
-    center: HTML
+    center: HTML = new EmptyHTML()
   ) {
     this.title = title
     this.markdown = markdown
@@ -159,7 +165,7 @@ class CardBody {
         <div class="px-3">
           <div>
             ${titleTemplate}
-            ${this.center ? this.center.html() : ''}
+            ${this.center.html()}
             ${markdownTempalte}
           </div>
         </div>
