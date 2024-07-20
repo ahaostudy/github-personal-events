@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GitHub Personal Events
 // @namespace    http://tampermonkey.net/
-// @version      1.0.0
+// @version      1.0.1
 // @description  This plugin is used to display personal events on the GitHub homepage
 // @author       ahaostudy
 // @license      MIT
