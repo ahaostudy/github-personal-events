@@ -1,7 +1,7 @@
-import axios from 'axios'
-import { Events, EventItem } from './event'
+import { fetchWithCache } from '../cache'
 import { createElementFromHTML } from '../utils'
 import { Card, CardBody, CardHeader, Image, Link } from '../view/card'
+import { EventItem, Events } from './event'
 
 interface Commit extends EventItem {
   commit: {
@@ -29,8 +29,7 @@ interface Commit extends EventItem {
 class CommitEvents extends Events<Commit> {
   async fetch(username: string, maxTime: Date): Promise<Commit[]> {
     const apiURL = `https://api.github.com/search/commits?q=author:${username}+committer-date:<${maxTime.toISOString()}&sort=committer-date&order=desc`
-    console.log('Fetch', apiURL)
-    const response = await axios.get(apiURL, {
+    const response = await fetchWithCache(apiURL, {
       headers: { Accept: 'application/vnd.github.v3+json' }
     })
     if (response.status === 200) {

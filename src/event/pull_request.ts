@@ -1,8 +1,8 @@
-import axios from 'axios'
-import { Events, EventItem } from './event'
+import { fetchWithCache } from '../cache'
 import { createElementFromHTML } from '../utils'
 import { Card, CardBody, CardHeader, Image, Link } from '../view/card'
 import { CardCenterPullRequest } from '../view/pull_request'
+import { EventItem, Events } from './event'
 
 interface PullRequest extends EventItem {
   state: string
@@ -22,8 +22,7 @@ interface PullRequest extends EventItem {
 class PullRequestEvents extends Events<PullRequest> {
   async fetch(username: string, maxTime: Date): Promise<PullRequest[]> {
     const apiURL = `https://api.github.com/search/issues?q=is:pr+author:${username}+created:<${maxTime.toISOString()}&sort=created&order=desc`
-    console.log('Fetch', apiURL)
-    const response = await axios.get(apiURL, {
+    const response = await fetchWithCache(apiURL, {
       headers: {
         Accept: 'application/vnd.github.v3+json'
         // TODO: how to get user token dynamically
@@ -54,10 +53,7 @@ class PullRequestEvents extends Events<PullRequest> {
       body = body.substring(0, 1410) + '...'
     }
 
-    const avatar = new Image(
-      event.user.avatar_url,
-      event.user.login
-    )
+    const avatar = new Image(event.user.avatar_url, event.user.login)
     const userLink = new Link(event.user.login, event.user.html_url)
     const joinText = 'contributed to'
     const repoLink = new Link(
@@ -73,11 +69,7 @@ class PullRequestEvents extends Events<PullRequest> {
       repoLink
     )
 
-    const title = new Link(
-      event.title,
-      event.html_url,
-      event.number
-    )
+    const title = new Link(event.title, event.html_url, event.number)
     const center = new CardCenterPullRequest(merged)
     const cardBody = new CardBody(title, body, center)
 

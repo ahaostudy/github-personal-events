@@ -8,7 +8,7 @@ header=$(cat << 'EOF'
 // ==UserScript==
 // @name         GitHub Personal Events
 // @namespace    http://tampermonkey.net/
-// @version      1.0.1
+// @version      1.0.2
 // @description  This plugin is used to display personal events on the GitHub homepage
 // @author       ahaostudy
 // @license      MIT
