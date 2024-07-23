@@ -17,10 +17,19 @@ class Cache {
   }
 
   private persistent() {
-    localStorage.setItem(
-      this.cacheKey,
-      JSON.stringify(Object.fromEntries(this.cache))
-    )
+    try {
+      localStorage.setItem(
+        this.cacheKey,
+        JSON.stringify(Object.fromEntries(this.cache))
+      )
+      return
+    } catch (e) {
+      // Failed to execute 'setltem' on 'Storage': Setting the value of sessionObj exceeded the quota
+      localStorage.removeItem(this.cacheKey)
+      this.cache.forEach((_, key) => {
+        this.cache.delete(key)
+      })
+    }
   }
 
   has(key: string): boolean {
